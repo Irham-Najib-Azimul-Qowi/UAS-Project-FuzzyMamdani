@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import io
 import os
-import time
 
 # Import modul internal
 from modules.fuzzy_system import get_fuzzy_variables, hitung_produksi_optimal
@@ -16,21 +15,15 @@ from modules.visualization import (
 from modules.evaluation import hitung_metrik_evaluasi, buat_analisis_error
 from modules.utils import validasi_dataframe, buat_dataset_contoh
 
-# Konfigurasi Halaman Utama
+# Konfigurasi Halaman Utama (Simple & Clean)
 st.set_page_config(
     page_title="Sistem Pendukung Keputusan Produksi",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Buat dataset contoh secara otomatis jika belum ada di folder 'dataset/'
+# Buat dataset contoh secara otomatis jika belum ada
 buat_dataset_contoh()
-
-# Memuat custom CSS untuk mempercantik UI/UX
-css_path = 'assets/style.css'
-if os.path.exists(css_path):
-    with open(css_path) as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 # Inisialisasi Session State untuk melacak data sepanjang sesi aplikasi
 if 'total_prediksi_tunggal' not in st.session_state:
@@ -44,17 +37,11 @@ if 'file_name_aktif' not in st.session_state:
 permintaan_fuzzy, persediaan_fuzzy, produksi_fuzzy = get_fuzzy_variables()
 
 # ----------------------------------------------------
-# NAVIGATION (SIDEBAR)
+# NAVIGASI SIDEBAR
 # ----------------------------------------------------
-st.sidebar.markdown(
-    '<div style="padding: 10px 0;"><h3 style="color: #F8FAFC; font-weight: 700; margin: 0;">Fuzzy Mamdani</h3>'
-    '<span style="color: #64748B; font-size: 0.8rem;">Decision Support System</span></div>', 
-    unsafe_allow_html=True
-)
-st.sidebar.markdown("---")
-
+st.sidebar.title("Navigasi")
 menu = st.sidebar.radio(
-    "Menu Utama",
+    "Pilih Menu",
     [
         "Ringkasan Sistem",
         "Prediksi Tunggal",
@@ -65,11 +52,11 @@ menu = st.sidebar.radio(
 )
 
 st.sidebar.markdown("---")
-st.sidebar.markdown('<div style="font-size: 0.85rem; font-weight: 600; color: #94A3B8; margin-bottom: 8px;">Unduh Template Data</div>', unsafe_allow_html=True)
+st.sidebar.subheader("Unduh Template")
 
 with open('dataset/contoh_dataset.csv', 'rb') as f:
     st.sidebar.download_button(
-        label="Unduh CSV Template",
+        label="Download Template CSV",
         data=f,
         file_name="contoh_dataset.csv",
         mime="text/csv",
@@ -78,7 +65,7 @@ with open('dataset/contoh_dataset.csv', 'rb') as f:
     
 with open('dataset/contoh_dataset.xlsx', 'rb') as f:
     st.sidebar.download_button(
-        label="Unduh Excel Template",
+        label="Download Template Excel",
         data=f,
         file_name="contoh_dataset.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -86,39 +73,33 @@ with open('dataset/contoh_dataset.xlsx', 'rb') as f:
     )
 
 st.sidebar.markdown("---")
-st.sidebar.markdown(
-    '<div style="font-size: 0.8rem; color: #64748B;">'
-    'Batas Universe:<br/>'
-    '- Permintaan: 760 s.d 7975<br/>'
-    '- Persediaan: 135 s.d 565<br/>'
-    '- Produksi: 1100 s.d 9040'
-    '</div>',
-    unsafe_allow_html=True
+st.sidebar.caption(
+    "Batas Nilai Universe:\n"
+    "- Permintaan: 760 s.d 7975\n"
+    "- Persediaan: 135 s.d 565\n"
+    "- Produksi: 1100 s.d 9040"
 )
 
 # ----------------------------------------------------
-# MAIN CONTENT CHANNELS
+# KONTEN UTAMA
 # ----------------------------------------------------
 
-# PAGE 1: RINGKASAN SISTEM
+# Halaman 1: Ringkasan Sistem
 if menu == "Ringkasan Sistem":
-    st.markdown('<h1 style="color: #F8FAFC; font-weight: 700; margin-bottom: 4px;">Sistem Pendukung Keputusan Produksi</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="color: #94A3B8; font-size: 1rem; margin-bottom: 24px;">Penentuan jumlah produksi optimal menggunakan pendekatan logika fuzzy metode Mamdani.</p>', unsafe_allow_html=True)
+    st.title("Sistem Pendukung Keputusan Produksi")
+    st.write("Penentuan jumlah produksi optimal menggunakan logika fuzzy metode Mamdani.")
     
-    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-    st.markdown(
-        '<div style="color: #E2E8F0; font-size: 0.95rem; line-height: 1.6;">'
-        'Aplikasi ini dirancang untuk mempermudah perhitungan jumlah produksi barang secara presisi '
-        'berdasarkan parameter masukkan tingkat <b>Permintaan Pasar</b> dan kapasitas <b>Sisa Persediaan Gudang</b>. '
-        'Dengan menerapkan 9 aturan logika fuzzy Mamdani dan defuzzifikasi Centroid, sistem memberikan rekomendasi '
-        'produksi barang yang optimal guna meminimalkan resiko kelebihan maupun kekurangan stok.'
-        '</div>',
-        unsafe_allow_html=True
-    )
-    st.markdown('</div>', unsafe_allow_html=True)
+    # Deskripsi Utama (Menggunakan Container Border Bawaan Streamlit)
+    with st.container(border=True):
+        st.write(
+            "Aplikasi ini dirancang untuk mempermudah perhitungan jumlah produksi barang secara presisi "
+            "berdasarkan parameter masukan tingkat Permintaan Pasar dan kapasitas Sisa Persediaan Gudang. "
+            "Dengan menerapkan 9 aturan logika fuzzy Mamdani dan defuzzifikasi Centroid, sistem memberikan rekomendasi "
+            "produksi barang yang optimal guna meminimalkan risiko kelebihan maupun kekurangan stok barang."
+        )
     
     # Ringkasan Statistik
-    st.markdown('<h3 style="color: #F8FAFC; font-weight: 600; margin-top: 30px; margin-bottom: 16px;">Indikator Aktivitas Sesi</h3>', unsafe_allow_html=True)
+    st.markdown("### Statistik Aktivitas Sesi")
     m_col1, m_col2, m_col3, m_col4 = st.columns(4)
     
     jumlah_data_massal = 0
@@ -139,58 +120,42 @@ if menu == "Ringkasan Sistem":
     m_col3.metric("Rata-Rata Produksi Fuzzy", f"{round(rata_rata_produksi, 1)} unit" if rata_rata_produksi > 0 else "0.0 unit")
     m_col4.metric("Tingkat Akurasi Model", akurasi_tercatat)
     
-    # Langkah Alur Kerja Fuzzy (Fixed Empty Box Bug)
-    st.markdown('<h3 style="color: #F8FAFC; font-weight: 600; margin-top: 30px; margin-bottom: 16px;">Tahapan Proses Inferensi Fuzzy</h3>', unsafe_allow_html=True)
+    # Alur Kerja Fuzzy (Menggunakan st.container border=True agar ukuran konsisten penuh)
+    st.markdown("### Tahapan Proses Inferensi Fuzzy")
     flow_col1, flow_col2, flow_col3, flow_col4 = st.columns(4)
     
     with flow_col1:
-        st.markdown(
-            '<div class="glass-card" style="min-height: 180px;">'
-            '<div style="font-weight: 600; color: #F8FAFC; margin-bottom: 8px; font-size: 0.95rem;">1. Fuzzifikasi</div>'
-            '<div style="color: #94A3B8; font-size: 0.82rem; line-height: 1.55;">Mengubah nilai riil permintaan dan persediaan menjadi derajat keanggotaan menggunakan himpunan fuzzy (sedikit, sedang, banyak).</div>'
-            '</div>',
-            unsafe_allow_html=True
-        )
-        
+        with st.container(border=True):
+            st.markdown("**1. Fuzzifikasi**")
+            st.write("Mengubah nilai riil permintaan dan persediaan menjadi nilai linguistik fuzzy.")
+            
     with flow_col2:
-        st.markdown(
-            '<div class="glass-card" style="min-height: 180px;">'
-            '<div style="font-weight: 600; color: #F8FAFC; margin-bottom: 8px; font-size: 0.95rem;">2. Inferensi Fuzzy</div>'
-            '<div style="color: #94A3B8; font-size: 0.82rem; line-height: 1.55;">Menerapkan operator AND (&) pada 9 aturan implikasi fuzzy untuk menentukan derajat kebenaran hipotesis konklusi produksi.</div>'
-            '</div>',
-            unsafe_allow_html=True
-        )
-        
+        with st.container(border=True):
+            st.markdown("**2. Inferensi Fuzzy**")
+            st.write("Menerapkan operator logika AND pada 9 aturan implikasi fuzzy.")
+            
     with flow_col3:
-        st.markdown(
-            '<div class="glass-card" style="min-height: 180px;">'
-            '<div style="font-weight: 600; color: #F8FAFC; margin-bottom: 8px; font-size: 0.95rem;">3. Komposisi Aturan</div>'
-            '<div style="color: #94A3B8; font-size: 0.82rem; line-height: 1.55;">Menggabungkan seluruh konklusi aturan implikasi fuzzy menggunakan metode MAX untuk membangun suatu daerah keputusan fuzzy tunggal.</div>'
-            '</div>',
-            unsafe_allow_html=True
-        )
-        
+        with st.container(border=True):
+            st.markdown("**3. Komposisi Aturan**")
+            st.write("Menggabungkan seluruh output aturan menggunakan metode MAX.")
+            
     with flow_col4:
-        st.markdown(
-            '<div class="glass-card" style="min-height: 180px;">'
-            '<div style="font-weight: 600; color: #F8FAFC; margin-bottom: 8px; font-size: 0.95rem;">4. Defuzzifikasi</div>'
-            '<div style="color: #94A3B8; font-size: 0.82rem; line-height: 1.55;">Menghitung nilai pusat gravitasi (Centroid) daerah keputusan fuzzy untuk mendapatkan output nilai riil produksi optimal.</div>'
-            '</div>',
-            unsafe_allow_html=True
-        )
+        with st.container(border=True):
+            st.markdown("**4. Defuzzifikasi**")
+            st.write("Menghitung nilai pusat gravitasi (Centroid) untuk hasil produksi.")
 
-# PAGE 2: PREDIKSI TUNGGAL
+# Halaman 2: Prediksi Tunggal
 elif menu == "Prediksi Tunggal":
-    st.markdown('<h1 style="color: #F8FAFC; font-weight: 700; margin-bottom: 4px;">Kalkulator Prediksi Tunggal</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="color: #94A3B8; font-size: 1rem; margin-bottom: 24px;">Hitung rekomendasi produksi optimal untuk satu kali analisis.</p>', unsafe_allow_html=True)
+    st.title("Prediksi Produksi Tunggal")
+    st.write("Tentukan nilai masukan untuk menghitung jumlah produksi optimal.")
     
     col_input, col_output = st.columns([1, 1.2])
     
     with col_input:
-        st.markdown('<h3 style="color: #F8FAFC; font-weight: 600; margin-bottom: 16px;">Parameter Masukkan</h3>', unsafe_allow_html=True)
+        st.subheader("Parameter Input")
         
         permintaan_val = st.number_input(
-            "Masukkan Jumlah Permintaan (Unit)",
+            "Jumlah Permintaan (Unit)",
             min_value=760,
             max_value=7975,
             value=1420,
@@ -198,7 +163,7 @@ elif menu == "Prediksi Tunggal":
         )
         
         persediaan_val = st.number_input(
-            "Masukkan Jumlah Persediaan (Unit)",
+            "Jumlah Persediaan (Unit)",
             min_value=135,
             max_value=565,
             value=385,
@@ -208,20 +173,17 @@ elif menu == "Prediksi Tunggal":
         btn_hitung = st.button("Hitung Produksi Optimal", use_container_width=True)
         
     with col_output:
-        st.markdown('<h3 style="color: #F8FAFC; font-weight: 600; margin-bottom: 16px;">Hasil Rekomendasi</h3>', unsafe_allow_html=True)
+        st.subheader("Hasil Perhitungan")
         
         if btn_hitung:
             with st.spinner("Menghitung..."):
                 hasil_fuzzy = hitung_produksi_optimal(permintaan_val, persediaan_val)
                 st.session_state.total_prediksi_tunggal += 1
                 
-                st.markdown(
-                    f'<div style="background: rgba(16, 185, 129, 0.08); border: 1px solid #10B981; border-radius: 8px; padding: 24px; text-align: center; margin-top: 10px;">'
-                    f'<div style="color: #94A3B8; font-size: 0.85rem; text-transform: uppercase; font-weight: 500;">Jumlah Produksi yang Disarankan</div>'
-                    f'<div style="color: #10B981; font-size: 2.8rem; font-weight: 700; margin-top: 8px;">{round(hasil_fuzzy, 2)} <span style="font-size: 1.2rem; color: #F1F5F9;">Unit</span></div>'
-                    f'</div>',
-                    unsafe_allow_html=True
-                )
+                with st.container(border=True):
+                    st.markdown("**Rekomendasi Produksi Optimal:**")
+                    st.header(f"{round(hasil_fuzzy, 2)} Unit")
+                    st.caption("Defuzzifikasi Centroid diselesaikan secara presisi.")
                 
                 st.markdown("---")
                 st.markdown("### Posisi Parameter pada Kurva Keanggotaan")
@@ -231,12 +193,12 @@ elif menu == "Prediksi Tunggal":
                 )
                 st.pyplot(fig_single)
         else:
-            st.info("Tentukan nilai permintaan dan persediaan di sebelah kiri, kemudian klik tombol Hitung.")
+            st.info("Masukkan parameter input di sebelah kiri, lalu klik tombol Hitung.")
 
-# PAGE 3: PREDIKSI MASSAL
+# Halaman 3: Prediksi Massal
 elif menu == "Prediksi Massal":
-    st.markdown('<h1 style="color: #F8FAFC; font-weight: 700; margin-bottom: 4px;">Prediksi Massal Otomatis</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="color: #94A3B8; font-size: 1rem; margin-bottom: 24px;">Pemrosesan batch data sekaligus melalui file CSV atau Excel.</p>', unsafe_allow_html=True)
+    st.title("Prediksi Massal Otomatis")
+    st.write("Unggah dataset operasional untuk memproses banyak data sekaligus secara batch.")
     
     col_upload, col_actions = st.columns([2, 1.2])
     
@@ -247,8 +209,8 @@ elif menu == "Prediksi Massal":
         )
         
     with col_actions:
-        st.markdown('<div style="font-weight: 600; color: #F8FAFC; margin-bottom: 8px;">Simulasi Cepat</div>', unsafe_allow_html=True)
-        st.write("Klik di bawah untuk memuat dataset contoh berisikan riwayat data produksi:")
+        st.markdown("**Simulasi Instan**")
+        st.write("Gunakan contoh dataset bawaan untuk simulasi cepat:")
         btn_load_sample = st.button("Muat Contoh Dataset", use_container_width=True)
 
     df_raw = None
@@ -260,14 +222,13 @@ elif menu == "Prediksi Massal":
             else:
                 df_raw = pd.read_excel(uploaded_file)
         except Exception as e:
-            st.error(f"Gagal membaca file berkas: {e}")
+            st.error(f"Gagal membaca file: {e}")
             
     elif btn_load_sample:
         st.session_state.file_name_aktif = "contoh_dataset.xlsx"
         df_raw = pd.read_excel('dataset/contoh_dataset.xlsx')
         st.toast("Dataset contoh berhasil dimuat!")
 
-    # Pemrosesan Data
     if df_raw is not None:
         is_valid, pesan, df_clean = validasi_dataframe(df_raw)
         
@@ -295,13 +256,13 @@ elif menu == "Prediksi Massal":
                 
             st.session_state.df_prediksi_massal = df_clean
             
-            st.markdown('<h3 style="color: #F8FAFC; font-weight: 600; margin-top: 24px; margin-bottom: 12px;">Tabel Hasil Kalkulasi</h3>', unsafe_allow_html=True)
+            st.markdown("### Tabel Hasil Perhitungan")
             st.dataframe(
                 df_clean,
                 use_container_width=True,
                 column_config={
-                    "permintaan": st.column_config.NumberColumn("Permintaan (Unit)", format="%d"),
-                    "persediaan": st.column_config.NumberColumn("Persediaan (Unit)", format="%d"),
+                    "permintaan": st.column_config.NumberColumn("Permintaan", format="%d"),
+                    "persediaan": st.column_config.NumberColumn("Persediaan", format="%d"),
                     "produksi_aktual": st.column_config.NumberColumn("Produksi Aktual", format="%.1f"),
                     "produksi_fuzzy": st.column_config.NumberColumn("Produksi Fuzzy", format="%.2f"),
                     "error": st.column_config.NumberColumn("Error", format="%.2f"),
@@ -309,8 +270,7 @@ elif menu == "Prediksi Massal":
                 }
             )
             
-            # Ekspor File
-            st.markdown('<h3 style="color: #F8FAFC; font-weight: 600; margin-top: 24px; margin-bottom: 12px;">Ekspor Laporan</h3>', unsafe_allow_html=True)
+            st.markdown("### Ekspor Laporan")
             col_d1, col_d2 = st.columns(2)
             
             # In-memory CSV
@@ -318,7 +278,7 @@ elif menu == "Prediksi Massal":
             col_d1.download_button(
                 label="Unduh Format CSV",
                 data=csv_bytes,
-                file_name=f"hasil_fuzzy_prediksi.csv",
+                file_name="hasil_fuzzy_prediksi.csv",
                 mime="text/csv",
                 use_container_width=True
             )
@@ -332,15 +292,15 @@ elif menu == "Prediksi Massal":
             col_d2.download_button(
                 label="Unduh Format Excel (XLSX)",
                 data=excel_bytes,
-                file_name=f"hasil_fuzzy_prediksi.xlsx",
+                file_name="hasil_fuzzy_prediksi.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 use_container_width=True
             )
 
-# PAGE 4: EVALUASI MODEL
+# Halaman 4: Evaluasi Model
 elif menu == "Evaluasi Model":
-    st.markdown('<h1 style="color: #F8FAFC; font-weight: 700; margin-bottom: 4px;">Dashboard Analisis Akurasi</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="color: #94A3B8; font-size: 1rem; margin-bottom: 24px;">Statistik performa keakuratan keputusan model fuzzy Mamdani.</p>', unsafe_allow_html=True)
+    st.title("Evaluasi Statistik Keakuratan Model")
+    st.write("Analisis performa prediksi model logika fuzzy Mamdani dibandingkan dengan data produksi riil.")
     
     df_eval = st.session_state.df_prediksi_massal
     
@@ -352,7 +312,7 @@ elif menu == "Evaluasi Model":
         metrik = hitung_metrik_evaluasi(df_eval)
         
         if metrik is None:
-            st.error("Gagal melakukan perhitungan metrik evaluasi.")
+            st.error("Gagal memproses metrik evaluasi.")
         else:
             col_met1, col_met2, col_met3, col_met4 = st.columns(4)
             
@@ -374,23 +334,19 @@ elif menu == "Evaluasi Model":
                 analisis_kategori = buat_analisis_error(df_eval)
                 
                 if analisis_kategori:
+                    # Menampilkan dalam bentuk list visual yang rapi dan simple
                     for kategori, jumlah in analisis_kategori.items():
                         persen = (jumlah / metrik['jumlah_data']) * 100
-                        st.markdown(
-                            f'<div class="metric-container">'
-                            f'<div>'
-                            f'<div class="metric-title">{kategori}</div>'
-                            f'<div style="font-size: 0.8rem; color: #64748B; margin-top: 4px;">{jumlah} baris data</div>'
-                            f'</div>'
-                            f'<div class="metric-value">{round(persen, 1)}%</div>'
-                            f'</div>',
-                            unsafe_allow_html=True
-                        )
+                        with st.container(border=True):
+                            col_l, col_r = st.columns([3, 1])
+                            col_l.markdown(f"**{kategori}**")
+                            col_l.caption(f"{jumlah} baris data")
+                            col_r.subheader(f"{round(persen, 1)}%")
 
-# PAGE 5: KURVA KEANGGOTAAN
+# Halaman 5: Kurva Keanggotaan
 elif menu == "Kurva Keanggotaan":
-    st.markdown('<h1 style="color: #F8FAFC; font-weight: 700; margin-bottom: 4px;">Visualisasi Kurva Keanggotaan</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="color: #94A3B8; font-size: 1rem; margin-bottom: 24px;">Visualisasi parameter logika fuzzy untuk variabel masukan dan luaran.</p>', unsafe_allow_html=True)
+    st.title("Visualisasi Kurva Keanggotaan")
+    st.write("Kurva fungsi keanggotaan untuk variabel masukan dan luaran logika fuzzy.")
     
     st.markdown("### Kurva Fungsi Keanggotaan Fuzzy")
     fig_mf = plot_membership_functions(permintaan_fuzzy, persediaan_fuzzy, produksi_fuzzy)
@@ -403,12 +359,6 @@ elif menu == "Kurva Keanggotaan":
         fig_trend = plot_actual_vs_predicted(df_eval)
         st.pyplot(fig_trend)
 
-# ----------------------------------------------------
-# FOOTER
-# ----------------------------------------------------
-st.markdown(
-    '<div class="custom-footer">'
-    '<p>Sistem Pendukung Keputusan Produksi (Fuzzy Mamdani) - Analisis Dashboard</p>'
-    '</div>',
-    unsafe_allow_html=True
-)
+# Footer Sederhana & Bersih
+st.markdown("---")
+st.caption("Sistem Pendukung Keputusan Produksi (Fuzzy Mamdani)")
