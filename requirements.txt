@@ -3,3 +3,6 @@ numpy
 scipy
 networkx
 scikit-fuzzy
+matplotlib
+openpyxl
+pandas
