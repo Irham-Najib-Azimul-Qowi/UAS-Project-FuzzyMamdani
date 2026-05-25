@@ -1,0 +1,173 @@
+/* Import font modern */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+/* Global Style */
+html, body, [data-testid="stAppViewContainer"] {
+    background-color: #0B0F19 !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    color: #E2E8F0 !important;
+}
+
+/* Sidebar Customization */
+[data-testid="stSidebar"] {
+    background-color: #0E1322 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Glassmorphism Card Style */
+.glass-card {
+    background: rgba(30, 41, 59, 0.45) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    margin-bottom: 20px !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.glass-card:hover {
+    transform: translateY(-4px) !important;
+    border-color: rgba(56, 189, 248, 0.3) !important;
+    box-shadow: 0 12px 40px 0 rgba(56, 189, 248, 0.15) !important;
+}
+
+/* Gradient Header */
+.main-header {
+    background: linear-gradient(135deg, #38BDF8 0%, #818CF8 50%, #C084FC 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    font-weight: 800 !important;
+    font-size: 2.5rem !important;
+    margin-bottom: 8px !important;
+}
+
+.sub-header {
+    color: #94A3B8 !important;
+    font-size: 1.1rem !important;
+    margin-bottom: 30px !important;
+    font-weight: 400 !important;
+}
+
+/* Metric Card Customization */
+.metric-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(30, 41, 59, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 12px !important;
+    padding: 16px 20px !important;
+    margin: 8px 0 !important;
+    transition: all 0.3s ease !important;
+}
+
+.metric-container:hover {
+    border-color: rgba(129, 140, 248, 0.4) !important;
+    background: rgba(30, 41, 59, 0.85) !important;
+}
+
+.metric-title {
+    font-size: 0.85rem !important;
+    color: #94A3B8 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 4px !important;
+}
+
+.metric-value {
+    font-size: 1.6rem !important;
+    font-weight: 700 !important;
+    color: #F8FAFC !important;
+}
+
+/* Custom Success/Alert Indicators */
+.indicator-pill {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.indicator-pill.success {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: #34D399;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.indicator-pill.warning {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: #FBBF24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Streamlit Native Elements Overrides */
+div[data-testid="stMetricValue"] {
+    font-size: 2.2rem !important;
+    font-weight: 800 !important;
+    color: #F8FAFC !important;
+}
+
+div[data-testid="stMetricLabel"] {
+    color: #94A3B8 !important;
+    font-size: 0.9rem !important;
+}
+
+/* Tabs Styling */
+button[data-baseweb="tab"] {
+    background-color: transparent !important;
+    color: #94A3B8 !important;
+    font-size: 1rem !important;
+    padding: 10px 16px !important;
+    border: none !important;
+    font-weight: 500 !important;
+    transition: color 0.3s ease !important;
+}
+
+button[data-baseweb="tab"]:hover {
+    color: #38BDF8 !important;
+}
+
+button[aria-selected="true"] {
+    color: #38BDF8 !important;
+    border-bottom: 2px solid #38BDF8 !important;
+    font-weight: 600 !important;
+}
+
+/* Custom Footer */
+.custom-footer {
+    text-align: center !important;
+    padding: 24px 0 !important;
+    margin-top: 60px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+    color: #64748B !important;
+    font-size: 0.85rem !important;
+}
+
+.custom-footer a {
+    color: #38BDF8 !important;
+    text-decoration: none !important;
+}
+
+.custom-footer a:hover {
+    text-decoration: underline !important;
+}
+
+/* Custom Rounded Expander */
+.streamlit-expanderHeader {
+    background-color: rgba(30, 41, 59, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 8px !important;
+    color: #F8FAFC !important;
+}
+
+.streamlit-expanderContent {
+    background-color: rgba(15, 23, 42, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.03) !important;
+    border-top: none !important;
+    border-radius: 0 0 8px 8px !important;
+    padding: 16px !important;
+}
